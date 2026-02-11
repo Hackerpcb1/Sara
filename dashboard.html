@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - RentaApartamentos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 2L4 10V28H12V20H20V28H28V10L16 2Z" fill="#1a237e"/>
+                </svg>
+                <h2>Panel de Administración</h2>
+                <p>RentaApartamentos</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" placeholder="Ingrese su usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="Ingrese su contraseña" required>
+                </div>
+                <div id="loginError" class="error-message" style="display: none;">
+                    Usuario o contraseña incorrectos
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" style="display: none;">
+        <header>
+            <nav>
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2L4 10V28H12V20H20V28H28V10L16 2Z" fill="#1a237e"/>
+                    </svg>
+                    <span>RentaApartamentos</span>
+                </div>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="listings.html">Listados</a></li>
+                    <li><a href="dashboard.html" class="active">Admin</a></li>
+                    <li><a href="#" id="logoutBtn" class="btn-nav">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="dashboard">
+            <div class="admin-header">
+                <h1>Panel de Administración</h1>
+                <button id="addNewBtn" class="btn btn-primary">+ Agregar Nuevo Apartamento</button>
+            </div>
+
+            <!-- Apartments List -->
+            <div class="admin-section">
+                <h2>Apartamentos Registrados</h2>
+                <div id="apartmentsList" class="apartments-admin-list">
+                    <!-- Apartments will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal for Add/Edit Apartment -->
+        <div id="apartmentModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Agregar Nuevo Apartamento</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <form id="apartmentForm" class="apartment-form">
+                    <input type="hidden" id="apartmentId">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aptName">Nombre del Apartamento *</label>
+                            <input type="text" id="aptName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="aptPrice">Precio ($/mes) *</label>
+                            <input type="number" id="aptPrice" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aptLocation">Ubicación *</label>
+                            <input type="text" id="aptLocation" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="aptImage">URL de Imagen *</label>
+                            <input type="text" id="aptImage" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aptBedrooms">Habitaciones *</label>
+                            <input type="number" id="aptBedrooms" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="aptBathrooms">Baños *</label>
+                            <input type="number" id="aptBathrooms" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="aptSize">Tamaño (m²) *</label>
+                            <input type="number" id="aptSize" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aptDescription">Descripción</label>
+                        <textarea id="aptDescription" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aptBadge">Badge</label>
+                            <select id="aptBadge">
+                                <option value="">Sin badge</option>
+                                <option value="Destacado">Destacado</option>
+                                <option value="Nuevo">Nuevo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Apartamento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>RentaApartamentos</h3>
+                    <p>Tu hogar perfecto te está esperando. Encuentra apartamentos verificados para profesionales de la salud.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="listings.html">Listados</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 RentaApartamentos. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
