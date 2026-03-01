@@ -1,6 +1,6 @@
 // ===== APARTMENTS DATA =====
-// This would normally come from a database or API
-const apartmentsData = [
+// Load from localStorage if available, otherwise use default data
+let apartmentsData = [
     {
         id: 1,
         name: "Apartamento Moderno en el Centro",
@@ -150,15 +150,33 @@ const apartmentsData = [
         location: "Barcelona, España",
         neighborhood: "Gràcia",
         bedrooms: 2,
-        bathrooms: 2,
-        size: 90,
+        bathrooms: 1,
+        size: 75,
         image: "images/apartment10.jpg",
-        fallbackImage: "https://images.unsplash.com/photo-1502672023488-70e25813eb80?w=600&h=400&fit=crop",
+        fallbackImage: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop",
         rating: 4.4,
         reviews: 19,
         type: "Apartamento"
     }
 ];
+
+// Load from localStorage, or save defaults if nothing stored yet
+function loadApartmentsFromStorage() {
+    const storedApartments = localStorage.getItem('apartments');
+    if (storedApartments) {
+        const parsed = JSON.parse(storedApartments);
+        if (parsed.length > 0) {
+            apartmentsData = parsed;
+        }
+    } else {
+        // Primera vez: guardar los datos por defecto en localStorage
+        // para que el dashboard y listados compartan la misma fuente
+        localStorage.setItem('apartments', JSON.stringify(apartmentsData));
+    }
+}
+
+// Call on load
+loadApartmentsFromStorage();
 
 // ===== FILTER AND RENDER FUNCTIONS =====
 
@@ -189,7 +207,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to filters
     document.getElementById('search').addEventListener('input', applyFilters);
     document.getElementById('price-filter').addEventListener('change', applyFilters);
-    document.getElementById('city-filter').addEventListener('change', applyFilters);
     document.getElementById('clear-filters').addEventListener('click', clearAllFilters);
 
     // Initial render
@@ -199,13 +216,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // Filter apartments based on current filters
 function filterApartments() {
     return apartmentsData.filter(apartment => {
-        // Location filter (searches in city, neighborhood, and location)
+        // Location filter (searches in name, city, neighborhood, and location)
         if (currentFilters.location) {
             const searchTerm = currentFilters.location.toLowerCase();
             const matchesLocation =
-                apartment.city.toLowerCase().includes(searchTerm) ||
-                apartment.neighborhood.toLowerCase().includes(searchTerm) ||
-                apartment.location.toLowerCase().includes(searchTerm);
+                (apartment.name || '').toLowerCase().includes(searchTerm) ||
+                (apartment.city || '').toLowerCase().includes(searchTerm) ||
+                (apartment.neighborhood || '').toLowerCase().includes(searchTerm) ||
+                (apartment.location || '').toLowerCase().includes(searchTerm);
 
             if (!matchesLocation) return false;
         }
@@ -229,7 +247,7 @@ function filterApartments() {
 function applyFilters() {
     currentFilters.location = document.getElementById('search').value.toLowerCase();
     currentFilters.maxPrice = document.getElementById('price-filter').value;
-    currentFilters.city = document.getElementById('city-filter').value;
+    currentFilters.city = '';
 
     const filteredApartments = filterApartments();
     renderApartments(filteredApartments);
@@ -239,7 +257,6 @@ function applyFilters() {
 function clearAllFilters() {
     document.getElementById('search').value = '';
     document.getElementById('price-filter').value = '';
-    document.getElementById('city-filter').value = '';
 
     currentFilters = {
         location: '',
@@ -285,38 +302,42 @@ function createApartmentCard(apartment) {
     const card = document.createElement('div');
     card.className = 'apartment-card';
 
-    // Generate stars HTML
-    const fullStars = Math.floor(apartment.rating);
-    const hasHalfStar = apartment.rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
+    // Rating: puede no existir en apartamentos creados desde el dashboard
+    const rating = apartment.rating || null;
+    const reviews = apartment.reviews || null;
     let starsHTML = '';
-    for (let i = 0; i < fullStars; i++) {
-        starsHTML += '<span class="star filled">★</span>';
-    }
-    if (hasHalfStar) {
-        starsHTML += '<span class="star half">★</span>';
-    }
-    for (let i = 0; i < emptyStars; i++) {
-        starsHTML += '<span class="star">★</span>';
+    let ratingHTML = '';
+
+    if (rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        for (let i = 0; i < fullStars; i++) starsHTML += '<span class="star filled">★</span>';
+        if (hasHalfStar) starsHTML += '<span class="star half">★</span>';
+        for (let i = 0; i < emptyStars; i++) starsHTML += '<span class="star">★</span>';
+        ratingHTML = `<div class="card-rating">
+                    <div class="stars">${starsHTML}</div>
+                    <span class="rating-text">${rating.toFixed(1)}${reviews ? ' (' + reviews + ' reseñas)' : ''}</span>
+                </div>`;
     }
 
-    // Determine which image to use
-    const imageUrl = apartment.image;
+    // Badge (del dashboard) o ninguno
+    const badgeHTML = apartment.badge
+        ? `<div class="card-badge${apartment.badge === 'Nuevo' ? ' new' : ''}">${apartment.badge}</div>`
+        : '';
+
+    // Imagen con fallback
+    const imageUrl = apartment.image || '';
     const fallback = apartment.fallbackImage || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop';
 
     card.innerHTML = `
+        ${badgeHTML}
         <img src="${imageUrl}" alt="${apartment.name}" onerror="this.src='${fallback}'">
         <div class="card-content">
             <div class="card-header">
                 <h3>${apartment.name}</h3>
                 <div class="card-location">📍 ${apartment.location}</div>
-                <div class="card-rating">
-                    <div class="stars">
-                        ${starsHTML}
-                    </div>
-                    <span class="rating-text">${apartment.rating.toFixed(1)} (${apartment.reviews} reseñas)</span>
-                </div>
+                ${ratingHTML}
             </div>
             <div class="card-features">
                 <span>🛏️ ${apartment.bedrooms} Habitación${apartment.bedrooms !== 1 ? 'es' : ''}</span>

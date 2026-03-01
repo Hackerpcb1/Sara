@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RentaApartamentos - Alquila tu hogar ideal</title>
+    <title>Vital Stays - Alquila tu hogar ideal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,12 +13,20 @@
     <header>
         <nav>
             <div class="logo">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <img src="images/VitalStays.jpeg" alt="Vital Stays Logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline'">
+                <svg class="logo-fallback" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
                     <path d="M16 2L4 10V28H12V20H20V28H28V10L16 2Z" fill="#1a237e"/>
                 </svg>
-                <span>RentaApartamentos</span>
+                <span>Vital Stays</span>
             </div>
-            <ul>
+            <div class="nav-toggle" id="navToggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </div>
+            <ul id="navMenu">
                 <li><a href="index.html" class="active">Inicio</a></li>
                 <li><a href="listings.html">Listados</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
@@ -136,98 +144,8 @@
         <div class="container">
             <h2 class="section-title">Apartamentos Destacados</h2>
             <p class="section-subtitle">Descubre nuestras mejores opciones seleccionadas especialmente para ti</p>
-            <div class="apartments-grid">
-                <!-- Apartamento 1 - Cambia apartment1.jpg por tu imagen -->
-                <div class="apartment-card">
-                    <div class="card-badge">Destacado</div>
-                    <img src="images/apartment1.jpg" alt="Apartamento Moderno en el Centro" onerror="this.src='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop'">
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h3>Apartamento Moderno en el Centro</h3>
-                            <div class="card-location">📍 Madrid, España</div>
-                            <div class="card-rating">
-                                <div class="stars">
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                </div>
-                                <span class="rating-text">5.0 (24 reseñas)</span>
-                            </div>
-                        </div>
-                        <div class="card-features">
-                            <span>🛏️ 2 Habitaciones</span>
-                            <span>🚿 2 Baños</span>
-                            <span>📐 85 m²</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="price">$1,200<span>/mes</span></div>
-                            <a href="apartment-detail.html?id=1" class="btn btn-small">Ver Detalles</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Apartamento 2 - Cambia apartment2.jpg por tu imagen -->
-                <div class="apartment-card">
-                    <div class="card-badge new">Nuevo</div>
-                    <img src="images/apartment2.jpg" alt="Apartamento Espacioso con Vista" onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop'">
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h3>Apartamento Espacioso con Vista</h3>
-                            <div class="card-location">📍 Barcelona, España</div>
-                            <div class="card-rating">
-                                <div class="stars">
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star half">★</span>
-                                </div>
-                                <span class="rating-text">4.5 (18 reseñas)</span>
-                            </div>
-                        </div>
-                        <div class="card-features">
-                            <span>🛏️ 3 Habitaciones</span>
-                            <span>🚿 2 Baños</span>
-                            <span>📐 120 m²</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="price">$1,500<span>/mes</span></div>
-                            <a href="apartment-detail.html?id=2" class="btn btn-small">Ver Detalles</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Apartamento 3 - Cambia apartment3.jpg por tu imagen -->
-                <div class="apartment-card">
-                    <img src="images/apartment3.jpg" alt="Apartamento Céntrico y Acogedor" onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop'">
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h3>Apartamento Céntrico y Acogedor</h3>
-                            <div class="card-location">📍 Valencia, España</div>
-                            <div class="card-rating">
-                                <div class="stars">
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star filled">★</span>
-                                    <span class="star">★</span>
-                                </div>
-                                <span class="rating-text">4.0 (12 reseñas)</span>
-                            </div>
-                        </div>
-                        <div class="card-features">
-                            <span>🛏️ 1 Habitación</span>
-                            <span>🚿 1 Baño</span>
-                            <span>📐 60 m²</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="price">$1,000<span>/mes</span></div>
-                            <a href="apartment-detail.html?id=3" class="btn btn-small">Ver Detalles</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="apartments-grid" id="featured-list">
+                <!-- Los apartamentos se cargan dinámicamente desde el dashboard -->
             </div>
             <div class="view-all">
                 <a href="listings.html" class="btn btn-outline">Ver Todos los Apartamentos</a>
@@ -294,7 +212,7 @@
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <h3>RentaApartamentos</h3>
+                <h3>Vital Stays</h3>
                 <p>Tu plataforma de confianza para encontrar el apartamento perfecto.</p>
             </div>
             <div class="footer-section">
@@ -324,7 +242,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 RentaApartamentos. Todos los derechos reservados.</p>
+            <p>&copy; 2026 Vital Stays. Todos los derechos reservados.</p>
         </div>
     </footer>
 
@@ -457,5 +375,62 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Cargar apartamentos destacados desde localStorage (mismos que el dashboard)
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('featured-list');
+            if (!container) return;
+
+            const stored = localStorage.getItem('apartments');
+            const fallbackImg = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop';
+
+            // Si no hay datos en localStorage, mostrar los 3 primeros por defecto
+            const defaultApts = [
+                { id: 1, name: 'Apartamento Moderno en el Centro', location: 'Madrid, España', price: 1200, bedrooms: 2, bathrooms: 2, size: 85, image: 'images/apartment1.jpg', badge: 'Destacado', rating: 5.0, reviews: 24 },
+                { id: 2, name: 'Apartamento Espacioso con Vista', location: 'Barcelona, España', price: 1500, bedrooms: 3, bathrooms: 2, size: 120, image: 'images/apartment2.jpg', badge: 'Nuevo', rating: 4.5, reviews: 18 },
+                { id: 3, name: 'Apartamento Céntrico y Acogedor', location: 'Valencia, España', price: 1000, bedrooms: 1, bathrooms: 1, size: 60, image: 'images/apartment3.jpg', badge: '', rating: 4.0, reviews: 12 }
+            ];
+
+            const apartments = stored ? JSON.parse(stored) : defaultApts;
+            const featured = apartments.slice(0, 3);
+
+            container.innerHTML = featured.map(apt => {
+                const badgeHTML = apt.badge
+                    ? `<div class="card-badge${apt.badge === 'Nuevo' ? ' new' : ''}">${apt.badge}</div>`
+                    : '';
+                const ratingHTML = apt.rating
+                    ? `<div class="card-rating">
+                            <div class="stars">
+                                ${'<span class="star filled">★</span>'.repeat(Math.floor(apt.rating))}
+                                ${apt.rating % 1 >= 0.5 ? '<span class="star half">★</span>' : ''}
+                                ${'<span class="star">★</span>'.repeat(5 - Math.ceil(apt.rating))}
+                            </div>
+                            <span class="rating-text">${apt.rating.toFixed(1)}${apt.reviews ? ' (' + apt.reviews + ' reseñas)' : ''}</span>
+                        </div>`
+                    : '';
+                return `
+                    <div class="apartment-card">
+                        ${badgeHTML}
+                        <img src="${apt.image || ''}" alt="${apt.name}" onerror="this.src='${fallbackImg}'">
+                        <div class="card-content">
+                            <div class="card-header">
+                                <h3>${apt.name}</h3>
+                                <div class="card-location">📍 ${apt.location}</div>
+                                ${ratingHTML}
+                            </div>
+                            <div class="card-features">
+                                <span>🛏️ ${apt.bedrooms} Habitación${apt.bedrooms !== 1 ? 'es' : ''}</span>
+                                <span>🚿 ${apt.bathrooms} Baño${apt.bathrooms !== 1 ? 's' : ''}</span>
+                                <span>📐 ${apt.size} m²</span>
+                            </div>
+                            <div class="card-footer">
+                                <div class="price">$${apt.price.toLocaleString()}<span>/mes</span></div>
+                                <a href="apartment-detail.html?id=${apt.id}" class="btn btn-small">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+        });
+    </script>
 </body>
 </html>

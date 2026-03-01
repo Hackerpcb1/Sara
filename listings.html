@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listados - RentaApartamentos</title>
+    <title>Listados - Vital Stays</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <nav>
             <div class="logo">
-                <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <img src="images/VitalStays.jpeg" alt="Vital Stays Logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline'">
+                <svg class="logo-fallback" width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display:none;">
                     <path d="M50 10 L90 35 L90 85 L10 85 L10 35 Z" fill="none" stroke="currentColor" stroke-width="4"/>
                     <rect x="40" y="55" width="20" height="30" fill="currentColor"/>
                     <rect x="25" y="45" width="15" height="15" fill="currentColor"/>
                     <rect x="60" y="45" width="15" height="15" fill="currentColor"/>
                 </svg>
-                <span>RentaApartamentos</span>
+                <span>Vital Stays</span>
             </div>
-            <ul>
+            <div class="nav-toggle" id="navToggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </div>
+            <ul id="navMenu">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="listings.html" class="active">Listados</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
@@ -72,21 +80,13 @@
                         </select>
                     </div>
 
-                    <div class="filter-group">
-                        <label for="city-filter">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            </svg>
-                            Ciudad
-                        </label>
-                        <select id="city-filter">
-                            <option value="">Todas las ciudades</option>
-                            <option value="Madrid">Madrid</option>
-                            <option value="Barcelona">Barcelona</option>
-                            <option value="Valencia">Valencia</option>
-                            <option value="Sevilla">Sevilla</option>
-                        </select>
-                    </div>
+                    <button id="search-btn" class="btn" onclick="applyFilters()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        Buscar
+                    </button>
 
                     <button id="clear-filters" class="btn btn-secondary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -98,50 +98,7 @@
                 </div>
             </div>
 
-            <div class="apartments-grid" id="apartments-list">
-                <div class="apartment-card" data-price="1200" data-city="Madrid" data-neighborhood="Centro" data-type="Apartamento">
-                    <img src="images/apartment1.jpg" alt="Apartamento 1" onerror="this.src='https://via.placeholder.com/300x200?text=Apartamento+1'">
-                    <h3>Apartamento Moderno</h3>
-                    <p>Ubicación: Centro, Madrid</p>
-                    <p>$1,200/mes</p>
-                    <a href="apartment-detail.html?id=1" class="btn">Ver Detalles</a>
-                </div>
-                <div class="apartment-card" data-price="1500" data-city="Barcelona" data-neighborhood="Norte" data-type="Casa">
-                    <img src="images/apartment2.jpg" alt="Apartamento 2" onerror="this.src='https://via.placeholder.com/300x200?text=Apartamento+2'">
-                    <h3>Apartamento Espacioso</h3>
-                    <p>Ubicación: Norte, Barcelona</p>
-                    <p>$1,500/mes</p>
-                    <a href="apartment-detail.html?id=2" class="btn">Ver Detalles</a>
-                </div>
-                <div class="apartment-card" data-price="1000" data-city="Valencia" data-neighborhood="Sur" data-type="Estudio">
-                    <img src="images/apartment3.jpg" alt="Apartamento 3" onerror="this.src='https://via.placeholder.com/300x200?text=Apartamento+3'">
-                    <h3>Apartamento Céntrico</h3>
-                    <p>Ubicación: Sur, Valencia</p>
-                    <p>$1,000/mes</p>
-                    <a href="apartment-detail.html?id=3" class="btn">Ver Detalles</a>
-                </div>
-                <div class="apartment-card" data-price="1800" data-city="Madrid" data-neighborhood="Malasaña" data-type="Loft">
-                    <img src="images/apartment1.jpg" alt="Apartamento 4" onerror="this.src='https://via.placeholder.com/300x200?text=Apartamento+4'">
-                    <h3>Apartamento de Lujo</h3>
-                    <p>Ubicación: Malasaña, Madrid</p>
-                    <p>$1,800/mes</p>
-                    <a href="apartment-detail.html?id=4" class="btn">Ver Detalles</a>
-                </div>
-                <div class="apartment-card" data-price="900" data-city="Sevilla" data-neighborhood="Centro" data-type="Dúplex">
-                    <img src="images/apartment2.jpg" alt="Apartamento 5" onerror="this.src='https://via.placeholder.com/300x200?text=Apartamento+5'">
-                    <h3>Dúplex Acogedor</h3>
-                    <p>Ubicación: Centro, Sevilla</p>
-                    <p>$900/mes</p>
-                    <a href="apartment-detail.html?id=5" class="btn">Ver Detalles</a>
-                </div>
-                <div class="apartment-card" data-price="2200" data-city="Barcelona" data-neighborhood="Chueca" data-type="Apartamento">
-                    <img src="images/apartment3.jpg" alt="Apartamento 6" onerror="this.src='https://via.placeholder.com/300x200?text=Apartamento+6'">
-                    <h3>Penthouse con Vistas</h3>
-                    <p>Ubicación: Chueca, Barcelona</p>
-                    <p>$2,200/mes</p>
-                    <a href="apartment-detail.html?id=6" class="btn">Ver Detalles</a>
-                </div>
-            </div>
+            <div class="apartments-grid" id="apartments-list"></div>
 
             <div id="no-results" class="no-results" style="display: none;">
                 <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -158,7 +115,7 @@
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <h3>RentaApartamentos</h3>
+                <h3>Vital Stays</h3>
                 <p>Tu plataforma de confianza para encontrar el apartamento perfecto.</p>
             </div>
             <div class="footer-section">
@@ -188,7 +145,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 RentaApartamentos. Todos los derechos reservados.</p>
+            <p>&copy; 2026 Vital Stays. Todos los derechos reservados.</p>
         </div>
     </footer>
 

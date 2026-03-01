@@ -1,7 +1,13 @@
 // Admin Panel JavaScript
 // Login credentials
 const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'Sara2020';
+// Password encrypted in base64: 'Sara2020' -> 'U2FyYTIwMjA='
+const ADMIN_PASSWORD = 'U2FyYTIwMjA=';
+
+// Simple base64 decode function
+function decodePassword(encoded) {
+    return atob(encoded);
+}
 
 // Check if user is logged in
 function checkAuth() {
@@ -30,7 +36,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    if (username === ADMIN_USERNAME && password === decodePassword(ADMIN_PASSWORD)) {
         sessionStorage.setItem('adminLoggedIn', 'true');
         document.getElementById('loginError').style.display = 'none';
         showDashboard();
@@ -125,6 +131,8 @@ addNewBtn.addEventListener('click', () => {
     document.getElementById('modalTitle').textContent = 'Agregar Nuevo Apartamento';
     document.getElementById('apartmentForm').reset();
     document.getElementById('apartmentId').value = '';
+    document.getElementById('galleryPreviews').innerHTML = '';
+    updateMainImagePreview('');
     modal.style.display = 'flex';
 });
 
@@ -142,12 +150,68 @@ window.addEventListener('click', (e) => {
     }
 });
 
+// Update main image URL preview
+function updateMainImagePreview(url) {
+    const preview = document.getElementById('mainImagePreview');
+    if (url && url.trim()) {
+        preview.src = url.trim();
+        preview.style.display = 'block';
+        preview.onerror = function() { preview.style.display = 'none'; };
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+}
+
+// Handle gallery file selection — converts each file to base64 and adds thumbnail
+function handleGalleryFiles(input) {
+    Array.from(input.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            addGalleryPreview(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    });
+    input.value = ''; // reset so same files can be selected again
+}
+
+// Add a gallery thumbnail preview (used on new selection and when editing)
+function addGalleryPreview(src) {
+    const container = document.getElementById('galleryPreviews');
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:relative;width:80px;height:60px;flex-shrink:0;';
+    const img = document.createElement('img');
+    img.src = src;
+    img.setAttribute('data-src', src);
+    img.style.cssText = 'width:80px;height:60px;object-fit:cover;border-radius:6px;display:block;';
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.textContent = '✕';
+    removeBtn.style.cssText = 'position:absolute;top:-5px;right:-5px;background:#8b1538;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1;padding:0;';
+    removeBtn.onclick = function() { wrapper.remove(); };
+    wrapper.appendChild(img);
+    wrapper.appendChild(removeBtn);
+    container.appendChild(wrapper);
+}
+
+// Collect all gallery images (base64 or URL stored in data-src)
+function getGalleryImages() {
+    return Array.from(document.querySelectorAll('#galleryPreviews img[data-src]'))
+        .map(img => img.getAttribute('data-src'))
+        .filter(Boolean);
+}
+
 // Save apartment (add or edit)
 document.getElementById('apartmentForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     const apartments = JSON.parse(localStorage.getItem('apartments'));
     const id = document.getElementById('apartmentId').value;
+    const mainImage = document.getElementById('aptImage').value.trim();
+    const galleryImages = getGalleryImages();
+
+    // Build final images array: main image first, then gallery extras (no duplicates)
+    const allImages = [mainImage, ...galleryImages.filter(url => url !== mainImage)].filter(Boolean);
 
     const apartmentData = {
         id: id ? parseInt(id) : Date.now(),
@@ -157,7 +221,8 @@ document.getElementById('apartmentForm').addEventListener('submit', function(e) 
         bedrooms: parseInt(document.getElementById('aptBedrooms').value),
         bathrooms: parseInt(document.getElementById('aptBathrooms').value),
         size: parseInt(document.getElementById('aptSize').value),
-        image: document.getElementById('aptImage').value,
+        image: mainImage,
+        images: allImages,
         description: document.getElementById('aptDescription').value,
         badge: document.getElementById('aptBadge').value
     };
@@ -190,9 +255,18 @@ function editApartment(id) {
         document.getElementById('aptBedrooms').value = apartment.bedrooms;
         document.getElementById('aptBathrooms').value = apartment.bathrooms;
         document.getElementById('aptSize').value = apartment.size;
-        document.getElementById('aptImage').value = apartment.image;
+        document.getElementById('aptImage').value = apartment.image || '';
         document.getElementById('aptDescription').value = apartment.description || '';
         document.getElementById('aptBadge').value = apartment.badge || '';
+
+        // Show main image URL preview
+        updateMainImagePreview(apartment.image || '');
+
+        // Load gallery images — exclude the main URL, show all others (base64 from file picker)
+        document.getElementById('galleryPreviews').innerHTML = '';
+        const galleryImages = (apartment.images || []).filter(src => src && src !== apartment.image);
+        galleryImages.forEach(src => addGalleryPreview(src));
+
         modal.style.display = 'flex';
     }
 }

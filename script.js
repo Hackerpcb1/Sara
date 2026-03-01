@@ -1,65 +1,100 @@
 // JavaScript for Apartment Rental Website
 
+// Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+    }
+});
+
 // Function to filter apartments on listings page
 function filterApartments() {
-    const searchTerm = document.getElementById('search').value.toLowerCase();
-    const priceFilter = document.getElementById('price-filter').value;
-    const cityFilter = document.getElementById('city-filter').value;
-    const neighborhoodFilter = document.getElementById('neighborhood-filter').value;
-    const typeFilter = document.getElementById('type-filter').value;
-    const apartments = document.querySelectorAll('.apartment-card');
+    // Check if we're on the listings page with dynamic data
+    if (typeof apartmentsData !== 'undefined') {
+        // Use the listings.js filter function
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const priceFilter = document.getElementById('price-filter').value;
+        
+        const filtered = apartmentsData.filter(apartment => {
+            let show = true;
+            
+            // Filter by search term (name or location)
+            if (searchTerm) {
+                const name = apartment.name ? apartment.name.toLowerCase() : '';
+                const location = apartment.location ? apartment.location.toLowerCase() : '';
+                if (!name.includes(searchTerm) && !location.includes(searchTerm)) {
+                    show = false;
+                }
+            }
+            
+            // Filter by price
+            if (priceFilter && show) {
+                const maxPrice = parseInt(priceFilter);
+                if (apartment.price > maxPrice) {
+                    show = false;
+                }
+            }
+            
+            return show;
+        });
+        
+        // Re-render the apartments with filtered data
+        renderApartments(filtered);
+    } else {
+        // Fallback for static HTML cards
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const priceFilter = document.getElementById('price-filter').value;
+        const apartments = document.querySelectorAll('.apartment-card');
 
-    apartments.forEach(apartment => {
-        const title = apartment.querySelector('h3').textContent.toLowerCase();
-        const location = apartment.querySelector('p').textContent.toLowerCase();
-        const price = parseInt(apartment.dataset.price);
-        const city = apartment.dataset.city;
-        const neighborhood = apartment.dataset.neighborhood;
-        const type = apartment.dataset.type;
+        apartments.forEach(apartment => {
+            const title = apartment.querySelector('h3').textContent.toLowerCase();
+            const price = parseInt(apartment.dataset.price);
 
-        let showApartment = true;
+            let showApartment = true;
 
-        // Filter by search term
-        if (searchTerm && !title.includes(searchTerm) && !location.includes(searchTerm)) {
-            showApartment = false;
-        }
-
-        // Filter by price
-        if (priceFilter) {
-            const [min, max] = priceFilter.split('-').map(p => parseInt(p) || Infinity);
-            if (price < min || (max && price > max)) {
+            if (searchTerm && !title.includes(searchTerm)) {
                 showApartment = false;
             }
-        }
 
-        // Filter by city
-        if (cityFilter && city !== cityFilter) {
-            showApartment = false;
-        }
+            if (priceFilter) {
+                const maxPrice = parseInt(priceFilter);
+                if (price > maxPrice) {
+                    showApartment = false;
+                }
+            }
 
-        // Filter by neighborhood
-        if (neighborhoodFilter && neighborhood !== neighborhoodFilter) {
-            showApartment = false;
-        }
-
-        // Filter by type
-        if (typeFilter && type !== typeFilter) {
-            showApartment = false;
-        }
-
-        apartment.style.display = showApartment ? 'block' : 'none';
-    });
+            apartment.style.display = showApartment ? 'block' : 'none';
+        });
+    }
 }
 
 // Function to clear all filters
 function clearFilters() {
     document.getElementById('search').value = '';
     document.getElementById('price-filter').value = '';
-    document.getElementById('city-filter').value = '';
-    document.getElementById('neighborhood-filter').value = '';
-    document.getElementById('type-filter').value = '';
-    filterApartments();
+    
+    // Check if we're on the listings page with dynamic data
+    if (typeof renderApartments !== 'undefined') {
+        // Re-render all apartments
+        renderApartments(apartmentsData);
+    } else {
+        // Fallback for static HTML cards
+        filterApartments();
+    }
 }
+
+// Add event listener for clear filters button
+document.addEventListener('DOMContentLoaded', function() {
+    const clearBtn = document.getElementById('clear-filters');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearFilters);
+    }
+});
 
 // Function to change main image on apartment detail page
 function changeImage(src) {
@@ -84,28 +119,65 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-// Function to load apartment images based on ID
+// Function to load apartment detail data from localStorage
 function loadApartmentImages() {
     const apartmentId = getUrlParameter('id');
-    if (apartmentId) {
-        const mainImage = document.getElementById('main-image');
-        const thumbnails = document.querySelectorAll('.thumbnail-images img');
+    if (!apartmentId) return;
 
-        // Set main image
-        const mainSrc = `images/apartment${apartmentId}.jpg`;
-        mainImage.src = mainSrc;
-        mainImage.onerror = function() {
-            this.src = 'https://via.placeholder.com/600x400?text=Apartamento+Principal';
-        };
+    const fallback = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop';
 
-        // Set thumbnails (assuming up to 3 images per apartment: apartment{id}.jpg, apartment{id}-1.jpg, etc.)
-        thumbnails.forEach((thumbnail, index) => {
-            const thumbSrc = `images/apartment${apartmentId}${index > 0 ? '-' + index : ''}.jpg`;
-            thumbnail.src = thumbSrc;
-            thumbnail.onerror = function() {
-                this.src = `https://via.placeholder.com/150x100?text=Imagen+${index + 1}`;
-            };
-        });
+    // Load apartment from localStorage
+    const stored = localStorage.getItem('apartments');
+    const apartments = stored ? JSON.parse(stored) : [];
+    const apartment = apartments.find(apt => String(apt.id) === String(apartmentId));
+
+    if (!apartment) return;
+
+    // Populate text fields
+    const titleEl = document.getElementById('apartment-title');
+    const priceEl = document.getElementById('apartment-price');
+    const locationEl = document.getElementById('apartment-location');
+    const descriptionEl = document.getElementById('apartment-description');
+    const featuresEl = document.getElementById('apartment-features');
+
+    if (titleEl) titleEl.textContent = apartment.name || '';
+    if (priceEl) priceEl.textContent = `$${(apartment.price || 0).toLocaleString()}/mes`;
+    if (locationEl) locationEl.textContent = `\uD83D\uDCCD ${apartment.location || ''}`;
+    if (descriptionEl) descriptionEl.textContent = apartment.description || 'Sin descripci\u00f3n disponible.';
+    if (featuresEl) {
+        featuresEl.innerHTML = `
+            <li>\uD83D\uDECF\uFE0F ${apartment.bedrooms} Habitaci\u00f3n${apartment.bedrooms !== 1 ? 'es' : ''}</li>
+            <li>\uD83D\uDEBF ${apartment.bathrooms} Ba\u00f1o${apartment.bathrooms !== 1 ? 's' : ''}</li>
+            <li>\uD83D\uDCD0 ${apartment.size} m\u00b2</li>
+        `;
+    }
+
+    // Build image list: use images[] if available, else single image field
+    const imageList = (apartment.images && apartment.images.length > 0)
+        ? apartment.images
+        : (apartment.image ? [apartment.image] : [fallback]);
+
+    // Set main image
+    const mainImage = document.getElementById('main-image');
+    if (mainImage) {
+        mainImage.src = imageList[0];
+        mainImage.onerror = function() { this.src = fallback; };
+    }
+
+    // Build thumbnails dynamically
+    const thumbnailContainer = document.querySelector('.thumbnail-images');
+    if (thumbnailContainer) {
+        thumbnailContainer.innerHTML = imageList.map((img, i) =>
+            `<img src="${img}" alt="Imagen ${i + 1}" onerror="this.src='${fallback}'">`
+        ).join('');
+    }
+
+    // Build dots dynamically
+    const dotsContainer = document.querySelector('.dots');
+    if (dotsContainer) {
+        dotsContainer.innerHTML = imageList.map((_, i) =>
+            `<span class="dot" onclick="currentSlide(${i + 1})"></span>`
+        ).join('');
     }
 }
 
